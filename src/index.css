@@ -1,0 +1,203 @@
+@import "tailwindcss";
+
+:root {
+  /* Logo theme variables */
+  --logo-color: #4338ca;
+  --logo-bg: linear-gradient(135deg, #4f46e5 0%, #7c3aed 100%);
+  --logo-text-color: #0f172a;
+  --logo-subtitle-color: #4f46e5;
+  --logo-border-color: #e0e7ff;
+  --logo-badge-shadow: 0 4px 14px rgba(79, 70, 229, 0.22);
+  --univ-logo-bg: #f8fafc;
+  --univ-logo-border: #e2e8f0;
+  --univ-logo-icon: #4f46e5;
+
+  /* UTBK CALLING card theme variables */
+  --utbk-calling-card-bg: linear-gradient(135deg, #ffffff 0%, #f5f3ff 50%, #ede9fe 100%);
+  --utbk-calling-card-border: #c7d2fe;
+  --utbk-calling-card-shadow: 0 10px 30px -5px rgba(99, 102, 241, 0.15), 0 4px 8px -2px rgba(99, 102, 241, 0.06);
+  --utbk-calling-badge-bg: #e0e7ff;
+  --utbk-calling-badge-border: #c7d2fe;
+  --utbk-calling-badge-text: #4338ca;
+  --utbk-calling-title: #312e81;
+  --utbk-countdown-number: #1e1b4b;
+  --utbk-countdown-label: #4f46e5;
+  --utbk-countdown-timer-bg: rgba(255, 255, 255, 0.9);
+  --utbk-countdown-timer-border: #c7d2fe;
+  --utbk-countdown-timer-text: #3730a3;
+  --utbk-alarm-bell: #d97706;
+  --utbk-alarm-body-gradient-start: #ffffff;
+  --utbk-alarm-body-gradient-end: #f8fafc;
+  --utbk-alarm-face-border: #4f46e5;
+  --utbk-alarm-hands: #1e1b4b;
+  --utbk-alarm-wave: #f59e0b;
+  --utbk-alarm-glow: rgba(245, 158, 11, 0.25);
+}
+
+html.dark, [data-theme="dark"] {
+  /* Logo theme variables in Dark Mode */
+  --logo-color: #818cf8;
+  --logo-bg: linear-gradient(135deg, #6366f1 0%, #8b5cf6 100%);
+  --logo-text-color: #f8fafc;
+  --logo-subtitle-color: #818cf8;
+  --logo-border-color: rgba(99, 102, 241, 0.3);
+  --logo-badge-shadow: 0 4px 16px rgba(99, 102, 241, 0.45);
+  --univ-logo-bg: #1e293b;
+  --univ-logo-border: #334155;
+  --univ-logo-icon: #818cf8;
+
+  /* UTBK CALLING card theme variables in Dark Mode */
+  --utbk-calling-card-bg: linear-gradient(135deg, #1e1b4b 0%, #17153a 50%, #0f172a 100%);
+  --utbk-calling-card-border: rgba(129, 140, 248, 0.35);
+  --utbk-calling-card-shadow: 0 12px 35px -5px rgba(0, 0, 0, 0.6), 0 0 25px rgba(99, 102, 241, 0.18);
+  --utbk-calling-badge-bg: rgba(99, 102, 241, 0.25);
+  --utbk-calling-badge-border: rgba(129, 140, 248, 0.4);
+  --utbk-calling-badge-text: #c7d2fe;
+  --utbk-calling-title: #f8fafc;
+  --utbk-countdown-number: #ffffff;
+  --utbk-countdown-label: #a5b4fc;
+  --utbk-countdown-timer-bg: rgba(15, 23, 42, 0.7);
+  --utbk-countdown-timer-border: rgba(129, 140, 248, 0.3);
+  --utbk-countdown-timer-text: #e0e7ff;
+  --utbk-alarm-bell: #fbbf24;
+  --utbk-alarm-body-gradient-start: #1e293b;
+  --utbk-alarm-body-gradient-end: #0f172a;
+  --utbk-alarm-face-border: #818cf8;
+  --utbk-alarm-hands: #fbbf24;
+  --utbk-alarm-wave: #fcd34d;
+  --utbk-alarm-glow: rgba(251, 191, 36, 0.4);
+}
+
+.brand-logo-badge {
+  background: var(--logo-bg);
+  box-shadow: var(--logo-badge-shadow);
+  border: 1px solid var(--logo-border-color);
+}
+.brand-logo-icon {
+  color: #ffffff !important;
+  stroke: #ffffff !important;
+}
+.brand-logo-text {
+  color: var(--logo-text-color) !important;
+}
+.brand-logo-sub {
+  color: var(--logo-subtitle-color) !important;
+}
+
+.univ-logo-container {
+  background-color: var(--univ-logo-bg) !important;
+  border-color: var(--univ-logo-border) !important;
+}
+.univ-logo-placeholder {
+  color: var(--univ-logo-icon) !important;
+  stroke: var(--univ-logo-icon) !important;
+}
+
+.utbk-calling-card {
+  background: var(--utbk-calling-card-bg) !important;
+  border: 1px solid var(--utbk-calling-card-border) !important;
+  box-shadow: var(--utbk-calling-card-shadow) !important;
+}
+.utbk-calling-badge {
+  background-color: var(--utbk-calling-badge-bg) !important;
+  border: 1px solid var(--utbk-calling-badge-border) !important;
+  color: var(--utbk-calling-badge-text) !important;
+}
+.utbk-calling-title {
+  color: var(--utbk-calling-title) !important;
+}
+.utbk-countdown-number {
+  color: var(--utbk-countdown-number) !important;
+}
+.utbk-countdown-label {
+  color: var(--utbk-countdown-label) !important;
+}
+.utbk-countdown-timer {
+  background-color: var(--utbk-countdown-timer-bg) !important;
+  border: 1px solid var(--utbk-countdown-timer-border) !important;
+  color: var(--utbk-countdown-timer-text) !important;
+}
+
+/* Alarm Clock Animations */
+@keyframes alarm-body-shake {
+  0%, 100% { transform: rotate(0deg); }
+  5%, 15%, 25% { transform: rotate(-6deg) scale(1.03); }
+  10%, 20%, 30% { transform: rotate(6deg) scale(1.03); }
+  35% { transform: rotate(0deg) scale(1); }
+}
+@keyframes bell-vibrate-left {
+  0%, 100% { transform: rotate(0deg); }
+  5%, 15%, 25% { transform: rotate(-14deg); }
+  10%, 20%, 30% { transform: rotate(8deg); }
+  35% { transform: rotate(0deg); }
+}
+@keyframes bell-vibrate-right {
+  0%, 100% { transform: rotate(0deg); }
+  5%, 15%, 25% { transform: rotate(14deg); }
+  10%, 20%, 30% { transform: rotate(-8deg); }
+  35% { transform: rotate(0deg); }
+}
+@keyframes hammer-strike {
+  0%, 100% { transform: translateX(0); }
+  5%, 15%, 25% { transform: translateX(-5px); }
+  10%, 20%, 30% { transform: translateX(5px); }
+  35% { transform: translateX(0); }
+}
+@keyframes wave-pulse-left {
+  0%, 100% { opacity: 0.15; transform: translateX(0) scale(0.9); }
+  10%, 25% { opacity: 1; transform: translateX(-4px) scale(1.12); }
+  40% { opacity: 0.15; }
+}
+@keyframes wave-pulse-right {
+  0%, 100% { opacity: 0.15; transform: translateX(0) scale(0.9); }
+  10%, 25% { opacity: 1; transform: translateX(4px) scale(1.12); }
+  40% { opacity: 0.15; }
+}
+@keyframes ring-glow-pulse {
+  0%, 100% { transform: scale(0.95); opacity: 0.25; }
+  20% { transform: scale(1.08); opacity: 0.7; }
+  40% { transform: scale(0.95); opacity: 0.25; }
+}
+
+.alarm-clock-svg {
+  width: clamp(80px, 12vw, 140px);
+  height: auto;
+  display: block;
+  animation: alarm-body-shake 2s infinite ease-in-out;
+  transform-origin: 50% 90%;
+  filter: drop-shadow(0 6px 16px var(--utbk-alarm-glow));
+}
+.alarm-bell-left {
+  transform-origin: 44px 33px;
+  animation: bell-vibrate-left 2s infinite ease-in-out;
+}
+.alarm-bell-right {
+  transform-origin: 116px 33px;
+  animation: bell-vibrate-right 2s infinite ease-in-out;
+}
+.alarm-hammer {
+  animation: hammer-strike 2s infinite ease-in-out;
+}
+.alarm-wave-left {
+  animation: wave-pulse-left 2s infinite ease-in-out;
+}
+.alarm-wave-right {
+  animation: wave-pulse-right 2s infinite ease-in-out;
+}
+.alarm-soundwave-ring {
+  position: absolute;
+  border-radius: 50%;
+  border: 2px dashed var(--utbk-alarm-wave);
+  pointer-events: none;
+  animation: ring-glow-pulse 2s infinite ease-in-out;
+}
+.alarm-soundwave-ring.ring-1 {
+  width: clamp(95px, 14vw, 155px);
+  height: clamp(95px, 14vw, 155px);
+}
+.alarm-soundwave-ring.ring-2 {
+  width: clamp(115px, 16vw, 175px);
+  height: clamp(115px, 16vw, 175px);
+  opacity: 0.15;
+  animation-delay: 0.15s;
+}

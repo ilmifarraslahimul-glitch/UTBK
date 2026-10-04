@@ -1,0 +1,1217 @@
+<!DOCTYPE html>
+<html lang="id" class="dark">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <meta name="theme-color" content="#0f172a">
+    
+    <meta name="mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="apple-mobile-web-app-title" content="Belajarku">
+    <meta name="application-name" content="Belajarku">
+
+    <title>Belajarku</title>
+    <meta name="description" content="Modern UTBK Study Dashboard — Kelola jadwal belajar, target universitas, tryout, dan evaluasi soal." />
+    <meta property="og:title" content="Belajarku" />
+    <meta property="og:description" content="Modern UTBK Study Dashboard — Kelola jadwal belajar, target universitas, tryout, dan evaluasi soal." />
+    <meta property="og:type" content="website" />
+    <meta name="twitter:card" content="summary_large_image" />
+
+    <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 512 512' width='512' height='512'><defs><linearGradient id='grad' x1='0%' y1='0%' x2='100%' y2='100%'><stop offset='0%' style='stop-color:%236366f1;stop-opacity:1' /><stop offset='100%' style='stop-color:%238b5cf6;stop-opacity:1' /></linearGradient></defs><rect width='512' height='512' rx='128' fill='url(%23grad)'/><path fill='%23ffffff' d='M256 128L64 224l192 96 144-72v88h48V224L256 128zm0 216l-128-64v64c0 35.3 57.3 64 128 64s128-28.7 128-64v-64l-128 64z'/></svg>">
+    <link rel="apple-touch-icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 512 512' width='512' height='512'><defs><linearGradient id='grad' x1='0%' y1='0%' x2='100%' y2='100%'><stop offset='0%' style='stop-color:%236366f1;stop-opacity:1' /><stop offset='100%' style='stop-color:%238b5cf6;stop-opacity:1' /></linearGradient></defs><rect width='512' height='512' rx='128' fill='url(%23grad)'/><path fill='%23ffffff' d='M256 128L64 224l192 96 144-72v88h48V224L256 128zm0 216l-128-64v64c0 35.3 57.3 64 128 64s128-28.7 128-64v-64l-128 64z'/></svg>">
+
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    colors: {
+                        brand: { 50: '#f5f3ff', 100: '#ede9fe', 200: '#ddd6fe', 500: '#8b5cf6', 600: '#7c3aed', 700: '#6d28d9' },
+                        slateBg: '#0f172a', cardDark: '#1e293b'
+                    }
+                }
+            }
+        }
+    </script>
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap');
+        
+        body {
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            transition: background-color 0.3s ease, color 0.3s ease;
+            user-select: none; -webkit-tap-highlight-color: transparent;
+        }
+
+        .custom-scrollbar::-webkit-scrollbar { height: 5px; width: 5px; }
+        .custom-scrollbar::-webkit-scrollbar-track { background: transparent; }
+        .custom-scrollbar::-webkit-scrollbar-thumb { background: #64748b; border-radius: 99px; }
+        .custom-scrollbar::-webkit-scrollbar-thumb:hover { background: #94a3b8; }
+        .no-scrollbar::-webkit-scrollbar { display: none; }
+        .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+
+        #mobile-sidebar { transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1); }
+        #mobile-sidebar-overlay { transition: opacity 0.3s ease-in-out; }
+
+        .animate-fadeIn { animation: fadeIn 0.25s ease-in-out forwards; }
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(4px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        /* Animasi Api Imut */
+        @keyframes flame-pulse {
+            0%, 100% { transform: scale(1) rotate(-3deg); opacity: 0.9; }
+            50% { transform: scale(1.15) rotate(3deg); opacity: 1; text-shadow: 0 0 10px rgba(245, 158, 11, 0.6); }
+        }
+        .animate-flame { display: inline-block; animation: flame-pulse 1.2s infinite ease-in-out; transform-origin: bottom center; }
+
+        /* Theme CSS Variables for Logo and UTBK CALLING */
+        :root {
+            /* Logo theme variables (Light Mode) */
+            --logo-color: #4338ca;
+            --logo-bg: linear-gradient(135deg, #4f46e5 0%, #7c3aed 100%);
+            --logo-text-color: #0f172a;
+            --logo-subtitle-color: #4f46e5;
+            --logo-border-color: #e0e7ff;
+            --logo-badge-shadow: 0 4px 14px rgba(79, 70, 229, 0.22);
+            --univ-logo-bg: #f8fafc;
+            --univ-logo-border: #e2e8f0;
+            --univ-logo-icon: #4f46e5;
+
+            /* UTBK CALLING card theme variables (Light Mode) */
+            --utbk-calling-card-bg: linear-gradient(135deg, #ffffff 0%, #f5f3ff 50%, #ede9fe 100%);
+            --utbk-calling-card-border: #c7d2fe;
+            --utbk-calling-card-shadow: 0 10px 30px -5px rgba(99, 102, 241, 0.15), 0 4px 8px -2px rgba(99, 102, 241, 0.06);
+            --utbk-calling-badge-bg: #e0e7ff;
+            --utbk-calling-badge-border: #c7d2fe;
+            --utbk-calling-badge-text: #4338ca;
+            --utbk-calling-title: #312e81;
+            --utbk-countdown-number: #1e1b4b;
+            --utbk-countdown-label: #4f46e5;
+            --utbk-countdown-timer-bg: rgba(255, 255, 255, 0.9);
+            --utbk-countdown-timer-border: #c7d2fe;
+            --utbk-countdown-timer-text: #3730a3;
+            --utbk-alarm-bell: #d97706;
+            --utbk-alarm-body-gradient-start: #ffffff;
+            --utbk-alarm-body-gradient-end: #f8fafc;
+            --utbk-alarm-face-border: #4f46e5;
+            --utbk-alarm-hands: #1e1b4b;
+            --utbk-alarm-wave: #f59e0b;
+            --utbk-alarm-glow: rgba(245, 158, 11, 0.25);
+        }
+
+        html.dark, [data-theme="dark"] {
+            /* Logo theme variables (Dark Mode) */
+            --logo-color: #818cf8;
+            --logo-bg: linear-gradient(135deg, #6366f1 0%, #8b5cf6 100%);
+            --logo-text-color: #f8fafc;
+            --logo-subtitle-color: #818cf8;
+            --logo-border-color: rgba(99, 102, 241, 0.3);
+            --logo-badge-shadow: 0 4px 16px rgba(99, 102, 241, 0.45);
+            --univ-logo-bg: #1e293b;
+            --univ-logo-border: #334155;
+            --univ-logo-icon: #818cf8;
+
+            /* UTBK CALLING card theme variables (Dark Mode) */
+            --utbk-calling-card-bg: linear-gradient(135deg, #1e1b4b 0%, #17153a 50%, #0f172a 100%);
+            --utbk-calling-card-border: rgba(129, 140, 248, 0.35);
+            --utbk-calling-card-shadow: 0 12px 35px -5px rgba(0, 0, 0, 0.6), 0 0 25px rgba(99, 102, 241, 0.18);
+            --utbk-calling-badge-bg: rgba(99, 102, 241, 0.25);
+            --utbk-calling-badge-border: rgba(129, 140, 248, 0.4);
+            --utbk-calling-badge-text: #c7d2fe;
+            --utbk-calling-title: #f8fafc;
+            --utbk-countdown-number: #ffffff;
+            --utbk-countdown-label: #a5b4fc;
+            --utbk-countdown-timer-bg: rgba(15, 23, 42, 0.7);
+            --utbk-countdown-timer-border: rgba(129, 140, 248, 0.3);
+            --utbk-countdown-timer-text: #e0e7ff;
+            --utbk-alarm-bell: #fbbf24;
+            --utbk-alarm-body-gradient-start: #1e293b;
+            --utbk-alarm-body-gradient-end: #0f172a;
+            --utbk-alarm-face-border: #818cf8;
+            --utbk-alarm-hands: #fbbf24;
+            --utbk-alarm-wave: #fcd34d;
+            --utbk-alarm-glow: rgba(251, 191, 36, 0.4);
+        }
+
+        .brand-logo-badge {
+            background: var(--logo-bg);
+            box-shadow: var(--logo-badge-shadow);
+            border: 1px solid var(--logo-border-color);
+        }
+        .brand-logo-icon {
+            color: #ffffff !important;
+            stroke: #ffffff !important;
+        }
+        .brand-logo-text {
+            color: var(--logo-text-color) !important;
+        }
+        .brand-logo-sub {
+            color: var(--logo-subtitle-color) !important;
+        }
+
+        .univ-logo-container {
+            background-color: var(--univ-logo-bg) !important;
+            border-color: var(--univ-logo-border) !important;
+        }
+        .univ-logo-placeholder {
+            color: var(--univ-logo-icon) !important;
+            stroke: var(--univ-logo-icon) !important;
+        }
+
+        .utbk-calling-card {
+            background: var(--utbk-calling-card-bg) !important;
+            border: 1px solid var(--utbk-calling-card-border) !important;
+            box-shadow: var(--utbk-calling-card-shadow) !important;
+        }
+        .utbk-calling-badge {
+            background-color: var(--utbk-calling-badge-bg) !important;
+            border: 1px solid var(--utbk-calling-badge-border) !important;
+            color: var(--utbk-calling-badge-text) !important;
+        }
+        .utbk-calling-title {
+            color: var(--utbk-calling-title) !important;
+        }
+        .utbk-countdown-number {
+            color: var(--utbk-countdown-number) !important;
+        }
+        .utbk-countdown-label {
+            color: var(--utbk-countdown-label) !important;
+        }
+        .utbk-countdown-timer {
+            background-color: var(--utbk-countdown-timer-bg) !important;
+            border: 1px solid var(--utbk-countdown-timer-border) !important;
+            color: var(--utbk-countdown-timer-text) !important;
+        }
+
+        /* Animasi Jam Alarm UTBK CALLING */
+        @keyframes alarm-body-shake {
+            0%, 100% { transform: rotate(0deg); }
+            5%, 15%, 25% { transform: rotate(-6deg) scale(1.03); }
+            10%, 20%, 30% { transform: rotate(6deg) scale(1.03); }
+            35% { transform: rotate(0deg) scale(1); }
+        }
+        @keyframes bell-vibrate-left {
+            0%, 100% { transform: rotate(0deg); }
+            5%, 15%, 25% { transform: rotate(-14deg); }
+            10%, 20%, 30% { transform: rotate(8deg); }
+            35% { transform: rotate(0deg); }
+        }
+        @keyframes bell-vibrate-right {
+            0%, 100% { transform: rotate(0deg); }
+            5%, 15%, 25% { transform: rotate(14deg); }
+            10%, 20%, 30% { transform: rotate(-8deg); }
+            35% { transform: rotate(0deg); }
+        }
+        @keyframes hammer-strike {
+            0%, 100% { transform: translateX(0); }
+            5%, 15%, 25% { transform: translateX(-5px); }
+            10%, 20%, 30% { transform: translateX(5px); }
+            35% { transform: translateX(0); }
+        }
+        @keyframes wave-pulse-left {
+            0%, 100% { opacity: 0.15; transform: translateX(0) scale(0.9); }
+            10%, 25% { opacity: 1; transform: translateX(-4px) scale(1.12); }
+            40% { opacity: 0.15; }
+        }
+        @keyframes wave-pulse-right {
+            0%, 100% { opacity: 0.15; transform: translateX(0) scale(0.9); }
+            10%, 25% { opacity: 1; transform: translateX(4px) scale(1.12); }
+            40% { opacity: 0.15; }
+        }
+        @keyframes ring-glow-pulse {
+            0%, 100% { transform: scale(0.95); opacity: 0.25; }
+            20% { transform: scale(1.08); opacity: 0.7; }
+            40% { transform: scale(0.95); opacity: 0.25; }
+        }
+
+        .animate-alarm-ring {
+            display: inline-block;
+            animation: alarm-body-shake 2s infinite ease-in-out;
+            transform-origin: bottom center;
+        }
+
+        .alarm-clock-svg {
+            width: clamp(80px, 12vw, 140px);
+            height: auto;
+            display: block;
+            animation: alarm-body-shake 2s infinite ease-in-out;
+            transform-origin: 50% 90%;
+            filter: drop-shadow(0 6px 16px var(--utbk-alarm-glow));
+        }
+        .alarm-bell-left {
+            transform-origin: 44px 33px;
+            animation: bell-vibrate-left 2s infinite ease-in-out;
+        }
+        .alarm-bell-right {
+            transform-origin: 116px 33px;
+            animation: bell-vibrate-right 2s infinite ease-in-out;
+        }
+        .alarm-hammer {
+            animation: hammer-strike 2s infinite ease-in-out;
+        }
+        .alarm-wave-left {
+            animation: wave-pulse-left 2s infinite ease-in-out;
+        }
+        .alarm-wave-right {
+            animation: wave-pulse-right 2s infinite ease-in-out;
+        }
+        .alarm-soundwave-ring {
+            position: absolute;
+            border-radius: 50%;
+            border: 2px dashed var(--utbk-alarm-wave);
+            pointer-events: none;
+            animation: ring-glow-pulse 2s infinite ease-in-out;
+        }
+        .alarm-soundwave-ring.ring-1 {
+            width: clamp(95px, 14vw, 155px);
+            height: clamp(95px, 14vw, 155px);
+        }
+        .alarm-soundwave-ring.ring-2 {
+            width: clamp(115px, 16vw, 175px);
+            height: clamp(115px, 16vw, 175px);
+            opacity: 0.15;
+            animation-delay: 0.15s;
+        }
+
+        /* Toast Animasi */
+        @keyframes slideInRight {
+            from { transform: translateX(100%); opacity: 0; }
+            to { transform: translateX(0); opacity: 1; }
+        }
+        @keyframes fadeOut {
+            from { opacity: 1; }
+            to { opacity: 0; transform: translateY(-10px); }
+        }
+        .toast-enter { animation: slideInRight 0.3s cubic-bezier(0.4, 0, 0.2, 1) forwards; }
+        .toast-exit { animation: fadeOut 0.3s ease forwards; }
+
+        #lightbox-img-container { touch-action: none; overflow: hidden; }
+        #lightbox-img { cursor: grab; will-change: transform; transition: none !important; }
+        #lightbox-img.dragging { cursor: grabbing; }
+    </style>
+</head>
+<body id="app-body" class="bg-slate-50 dark:bg-slate-950 text-slate-800 dark:text-slate-100 font-sans min-h-screen flex flex-col md:flex-row transition-colors duration-200 relative">
+
+    <div id="toast-container" class="fixed top-20 md:top-5 right-5 z-[200] flex flex-col gap-3 pointer-events-none w-72"></div>
+
+    <!-- Header Mobile -->
+    <header class="md:hidden sticky top-0 z-30 bg-white/90 dark:bg-slate-900/90 backdrop-blur-md border-b border-slate-200 dark:border-slate-800 px-4 py-3 flex items-center justify-between shadow-sm">
+        <div class="flex items-center gap-3">
+            <button onclick="window.toggleMobileSidebar()" class="p-2 rounded-xl bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-200 focus:outline-none hover:bg-slate-200 dark:hover:bg-slate-700 transition">
+                <i data-lucide="menu" class="w-5 h-5"></i>
+            </button>
+            <div class="flex items-center gap-2.5">
+                <div class="p-2 brand-logo-badge rounded-xl flex items-center justify-center">
+                    <i data-lucide="graduation-cap" class="w-4 h-4 brand-logo-icon"></i>
+                </div>
+                <div>
+                    <h1 class="font-extrabold brand-logo-text tracking-tight text-sm leading-none">BELAJARKU</h1>
+                    <p class="text-[10px] brand-logo-sub font-semibold tracking-wider uppercase mt-0.5">UTBK Dashboard</p>
+                </div>
+            </div>
+        </div>
+        <button onclick="window.toggleTheme()" class="p-2 bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 rounded-xl text-xs font-bold transition" title="Ganti Tema">
+            <i data-lucide="moon" class="w-4 h-4 dark:hidden text-slate-700"></i>
+            <i data-lucide="sun" class="w-4 h-4 hidden dark:block text-amber-400"></i>
+        </button>
+    </header>
+
+    <!-- Mobile Sidebar -->
+    <div id="mobile-sidebar-overlay" onclick="window.toggleMobileSidebar()" class="hidden fixed inset-0 bg-slate-950/60 backdrop-blur-sm z-50 opacity-0 transition-opacity"></div>
+    <aside id="mobile-sidebar" class="fixed top-0 left-0 bottom-0 w-72 bg-white dark:bg-slate-900 z-50 transform -translate-x-full transition-transform duration-300 flex flex-col justify-between shadow-2xl border-r border-slate-200 dark:border-slate-800">
+        <div>
+            <div class="p-5 border-b border-slate-200 dark:border-slate-800 flex items-center justify-between">
+                <div class="flex items-center gap-3">
+                    <div class="p-2.5 brand-logo-badge rounded-xl flex items-center justify-center">
+                        <i data-lucide="graduation-cap" class="w-5 h-5 brand-logo-icon"></i>
+                    </div>
+                    <div>
+                        <h2 class="font-black brand-logo-text text-base tracking-tight leading-none">BELAJARKU</h2>
+                        <p class="text-[11px] brand-logo-sub font-semibold mt-0.5">UTBK Study Dashboard</p>
+                    </div>
+                </div>
+                <button onclick="window.toggleMobileSidebar()" class="p-2 rounded-xl text-slate-400 hover:text-slate-200">
+                    <i data-lucide="x" class="w-5 h-5"></i>
+                </button>
+            </div>
+            <nav class="p-3 space-y-1 text-xs font-semibold custom-scrollbar overflow-y-auto max-h-[calc(100vh-140px)]">
+                <button onclick="window.mobileSwitchTab(1)" id="m-nav-1" class="w-full text-left px-3.5 py-3 rounded-xl transition flex items-center gap-3 text-slate-600 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-800/60">
+                    <i data-lucide="home" class="w-4 h-4 text-indigo-500"></i> Beranda
+                </button>
+                <button onclick="window.mobileSwitchTab(2)" id="m-nav-2" class="w-full text-left px-3.5 py-3 rounded-xl transition flex items-center gap-3 text-slate-600 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-800/60">
+                    <i data-lucide="calendar" class="w-4 h-4 text-emerald-500"></i> Kalender Belajar
+                </button>
+                <button onclick="window.mobileSwitchTab(4)" id="m-nav-4" class="w-full text-left px-3.5 py-3 rounded-xl transition flex items-center gap-3 text-slate-600 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-800/60">
+                    <i data-lucide="book-open" class="w-4 h-4 text-cyan-500"></i> Belajar Harian
+                </button>
+                <button onclick="window.mobileSwitchTab(5)" id="m-nav-5" class="w-full text-left px-3.5 py-3 rounded-xl transition flex items-center gap-3 text-slate-600 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-800/60">
+                    <i data-lucide="circle-x" class="w-4 h-4 text-rose-500"></i> Bank Kesalahan
+                </button>
+                <button onclick="window.mobileSwitchTab(6)" id="m-nav-6" class="w-full text-left px-3.5 py-3 rounded-xl transition flex items-center gap-3 text-slate-600 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-800/60">
+                    <i data-lucide="file-check-2" class="w-4 h-4 text-purple-500"></i> Tryout
+                </button>
+                <button onclick="window.mobileSwitchTab(7)" id="m-nav-7" class="w-full text-left px-3.5 py-3 rounded-xl transition flex items-center gap-3 text-slate-600 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-800/60">
+                    <i data-lucide="trending-up" class="w-4 h-4 text-blue-500"></i> Progress Saya
+                </button>
+                <button onclick="window.mobileSwitchTab(8)" id="m-nav-8" class="w-full text-left px-3.5 py-3 rounded-xl transition flex items-center gap-3 text-slate-600 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-800/60">
+                    <i data-lucide="award" class="w-4 h-4 text-amber-500"></i> Pencapaian
+                </button>
+                <button onclick="window.mobileSwitchTab(9)" id="m-nav-9" class="w-full text-left px-3.5 py-3 rounded-xl transition flex items-center gap-3 text-slate-600 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-800/60">
+                    <i data-lucide="settings" class="w-4 h-4 text-slate-400"></i> Pengaturan
+                </button>
+                <button onclick="window.mobileSwitchTab(10)" id="m-nav-10" class="w-full text-left px-3.5 py-3 rounded-xl transition flex items-center gap-3 text-slate-600 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-800/60">
+                    <i data-lucide="info" class="w-4 h-4 text-sky-500"></i> Tentang Belajarku
+                </button>
+            </nav>
+        </div>
+        <div class="p-4 border-t border-slate-200 dark:border-slate-800 text-[11px] text-slate-400 font-medium text-center">
+            Belajarku App &copy; 2026
+        </div>
+    </aside>
+
+    <!-- Floating Action Button for Study Log -->
+    <button onclick="window.switchTab(4)" title="Tambah Belajar Harian" class="fixed bottom-6 right-6 z-40 bg-gradient-to-r from-indigo-600 to-violet-600 hover:from-indigo-500 hover:to-violet-500 text-white w-14 h-14 rounded-full flex items-center justify-center shadow-lg shadow-indigo-500/40 hover:scale-105 active:scale-95 transition-all duration-200 focus:outline-none">
+        <i data-lucide="plus" class="w-6 h-6 stroke-[2.5]"></i>
+    </button>
+
+    <!-- Desktop Sidebar -->
+    <aside class="hidden md:flex w-64 bg-white/80 dark:bg-slate-900/90 backdrop-blur-xl border-r border-slate-200/80 dark:border-slate-800/80 flex-shrink-0 flex-col justify-between sticky top-0 h-screen z-50">
+        <div>
+            <div class="p-6 border-b border-slate-200/80 dark:border-slate-800/80 flex items-center justify-between">
+                <div class="flex items-center space-x-3">
+                    <div class="p-2.5 brand-logo-badge rounded-2xl flex items-center justify-center">
+                        <i data-lucide="graduation-cap" class="w-5 h-5 brand-logo-icon"></i>
+                    </div>
+                    <div>
+                        <h1 class="font-extrabold text-base brand-logo-text tracking-tight leading-none">Belajarku</h1>
+                        <span class="text-[10px] font-semibold brand-logo-sub uppercase tracking-widest mt-0.5 block">Dashboard</span>
+                    </div>
+                </div>
+                <button onclick="window.toggleTheme()" class="p-2 bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300 rounded-xl text-xs font-semibold hover:bg-slate-200 dark:hover:bg-slate-700 transition" title="Ganti Tema">
+                    <i data-lucide="moon" class="w-4 h-4 dark:hidden text-slate-700"></i>
+                    <i data-lucide="sun" class="w-4 h-4 hidden dark:block text-amber-400"></i>
+                </button>
+            </div>
+
+            <nav class="p-3 space-y-1 text-xs font-semibold custom-scrollbar max-h-[calc(100vh-140px)] overflow-y-auto">
+                <div class="px-3 pt-2 pb-1 text-[10px] font-extrabold text-slate-400 uppercase tracking-wider">Menu Utama</div>
+                <button onclick="window.switchTab(1)" id="nav-1" class="w-full text-left px-3.5 py-2.5 rounded-xl transition flex items-center gap-3 text-slate-600 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-800/60 hover:text-slate-900 dark:hover:text-slate-100">
+                    <i data-lucide="home" class="w-4 h-4 text-indigo-500"></i> Beranda
+                </button>
+                <button onclick="window.switchTab(2)" id="nav-2" class="w-full text-left px-3.5 py-2.5 rounded-xl transition flex items-center gap-3 text-slate-600 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-800/60 hover:text-slate-900 dark:hover:text-slate-100">
+                    <i data-lucide="calendar" class="w-4 h-4 text-emerald-500"></i> Kalender Belajar
+                </button>
+                <button onclick="window.switchTab(4)" id="nav-4" class="w-full text-left px-3.5 py-2.5 rounded-xl transition flex items-center gap-3 text-slate-600 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-800/60 hover:text-slate-900 dark:hover:text-slate-100">
+                    <i data-lucide="book-open" class="w-4 h-4 text-cyan-500"></i> Belajar Harian
+                </button>
+                
+                <div class="px-3 pt-4 pb-1 text-[10px] font-extrabold text-slate-400 uppercase tracking-wider">Evaluasi & Progress</div>
+                <button onclick="window.switchTab(5)" id="nav-5" class="w-full text-left px-3.5 py-2.5 rounded-xl transition flex items-center gap-3 text-slate-600 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-800/60 hover:text-slate-900 dark:hover:text-slate-100">
+                    <i data-lucide="circle-x" class="w-4 h-4 text-rose-500"></i> Bank Kesalahan
+                </button>
+                <button onclick="window.switchTab(6)" id="nav-6" class="w-full text-left px-3.5 py-2.5 rounded-xl transition flex items-center gap-3 text-slate-600 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-800/60 hover:text-slate-900 dark:hover:text-slate-100">
+                    <i data-lucide="file-check-2" class="w-4 h-4 text-purple-500"></i> Tryout
+                </button>
+                <button onclick="window.switchTab(7)" id="nav-7" class="w-full text-left px-3.5 py-2.5 rounded-xl transition flex items-center gap-3 text-slate-600 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-800/60 hover:text-slate-900 dark:hover:text-slate-100">
+                    <i data-lucide="trending-up" class="w-4 h-4 text-blue-500"></i> Progress Saya
+                </button>
+                <button onclick="window.switchTab(8)" id="nav-8" class="w-full text-left px-3.5 py-2.5 rounded-xl transition flex items-center gap-3 text-slate-600 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-800/60 hover:text-slate-900 dark:hover:text-slate-100">
+                    <i data-lucide="award" class="w-4 h-4 text-amber-500"></i> Pencapaian
+                </button>
+                
+                <div class="px-3 pt-4 pb-1 text-[10px] font-extrabold text-slate-400 uppercase tracking-wider">Sistem</div>
+                <button onclick="window.switchTab(9)" id="nav-9" class="w-full text-left px-3.5 py-2.5 rounded-xl transition flex items-center gap-3 text-slate-600 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-800/60 hover:text-slate-900 dark:hover:text-slate-100">
+                    <i data-lucide="settings" class="w-4 h-4 text-slate-400"></i> Pengaturan
+                </button>
+                <button onclick="window.switchTab(10)" id="nav-10" class="w-full text-left px-3.5 py-2.5 rounded-xl transition flex items-center gap-3 text-slate-600 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-800/60 hover:text-slate-900 dark:hover:text-slate-100">
+                    <i data-lucide="info" class="w-4 h-4 text-sky-500"></i> Tentang Belajarku
+                </button>
+            </nav>
+        </div>
+        <div class="p-4 border-t border-slate-200/80 dark:border-slate-800/80 text-[11px] text-slate-400 font-medium text-center">
+            Belajarku App &copy; 2026
+        </div>
+    </aside>
+
+    <!-- Main Content Area -->
+    <main class="flex-grow p-4 md:p-8 overflow-y-auto min-h-screen max-w-7xl mx-auto w-full space-y-6">
+
+        <!-- ================= PAGE 1: BERANDA ================= -->
+        <section id="page-1" class="space-y-6 animate-fadeIn">
+            <!-- Profile Banner & UTBK CALLING -->
+            <div class="bg-white dark:bg-slate-900 rounded-3xl p-6 md:p-8 border border-slate-200/80 dark:border-slate-800/80 shadow-sm transition-all duration-300">
+                <div class="flex flex-col xl:flex-row items-stretch justify-between gap-6">
+                    <!-- User Profile Column -->
+                    <div class="flex items-center space-x-4 xl:space-x-5 flex-1 min-w-[280px]">
+                        <div class="w-20 h-20 univ-logo-container rounded-2xl flex items-center justify-center border overflow-hidden flex-shrink-0 shadow-inner">
+                            <i data-lucide="building-2" class="w-9 h-9 univ-logo-placeholder" id="dash-logo-placeholder"></i>
+                            <img id="dash-univ-logo" src="" class="w-full h-full object-contain hidden p-1" alt="Logo Univ">
+                        </div>
+                        <div>
+                            <h2 class="text-2xl font-extrabold text-slate-900 dark:text-white tracking-tight" id="dash-user-name">Siswa Ambis</h2>
+                            <p class="text-indigo-600 dark:text-indigo-400 font-bold flex items-center gap-1.5 mt-1 text-xs md:text-sm">
+                                <i data-lucide="target" class="w-4 h-4"></i> Target Univ: <span id="dash-target-univ" class="font-bold">Belum Diatur</span>
+                            </p>
+                            <p class="text-slate-500 dark:text-slate-400 text-xs font-medium mt-1">
+                                Jurusan: <span id="dash-target-major" class="font-semibold text-slate-800 dark:text-slate-200">Belum Diatur</span> | Target Skor: <span id="dash-target-score" class="font-bold text-indigo-600 dark:text-indigo-400">0</span>
+                            </p>
+                        </div>
+                    </div>
+                    
+                    <!-- UTBK Calling Card (Prominent, High-Contrast & Balanced) -->
+                    <div class="utbk-calling-card p-5 sm:p-6 rounded-2xl flex flex-row items-center justify-between gap-4 sm:gap-6 min-w-[300px] sm:min-w-[360px] md:min-w-[400px] relative overflow-hidden transition-all duration-300 flex-1">
+                        <!-- Left: Header Badge, Days Number, and Live Timer -->
+                        <div class="flex flex-col items-start z-10 space-y-2 flex-grow min-w-0">
+                            <div class="utbk-calling-badge px-3 py-1 rounded-full text-xs font-black uppercase tracking-wider flex items-center gap-1.5 shadow-sm">
+                                <span class="animate-alarm-ring text-sm">⏰</span>
+                                <span class="utbk-calling-title tracking-widest font-black">UTBK CALLING</span>
+                            </div>
+                            
+                            <div class="flex items-baseline gap-2 pt-1">
+                                <span class="text-4xl sm:text-5xl font-black utbk-countdown-number tracking-tight font-mono leading-none" id="dash-utbk-countdown">0</span>
+                                <span class="text-xs sm:text-sm font-extrabold utbk-countdown-label">Hari Lagi</span>
+                            </div>
+
+                            <div class="utbk-countdown-timer px-2.5 py-1 rounded-lg text-[11px] font-mono font-bold flex items-center gap-1.5 shadow-sm mt-1">
+                                <i data-lucide="timer" class="w-3.5 h-3.5 flex-shrink-0"></i>
+                                <span id="dash-utbk-time-countdown" class="truncate font-semibold">00j : 00m : 00d</span>
+                            </div>
+                        </div>
+
+                        <!-- Right: Prominent Alarm Clock Animation (120-150px on desktop) -->
+                        <div class="alarm-animation-wrapper flex-shrink-0 flex items-center justify-center relative z-10">
+                            <div class="alarm-soundwave-ring ring-1"></div>
+                            <div class="alarm-soundwave-ring ring-2"></div>
+                            <svg class="alarm-clock-svg" viewBox="0 0 160 160" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                <!-- Sound Waves -->
+                                <path class="alarm-wave-left" d="M22 62C16 72 16 88 22 98" stroke="var(--utbk-alarm-wave)" stroke-width="3.5" stroke-linecap="round"/>
+                                <path class="alarm-wave-left" d="M12 54C3 70 3 92 12 108" stroke="var(--utbk-alarm-wave)" stroke-width="3" stroke-linecap="round" stroke-dasharray="4 2"/>
+                                <path class="alarm-wave-right" d="M138 62C144 72 144 88 138 98" stroke="var(--utbk-alarm-wave)" stroke-width="3.5" stroke-linecap="round"/>
+                                <path class="alarm-wave-right" d="M148 54C157 70 157 92 148 108" stroke="var(--utbk-alarm-wave)" stroke-width="3" stroke-linecap="round" stroke-dasharray="4 2"/>
+
+                                <!-- Feet -->
+                                <path d="M46 128L34 148" stroke="var(--utbk-calling-title)" stroke-width="6" stroke-linecap="round"/>
+                                <path d="M114 128L126 148" stroke="var(--utbk-calling-title)" stroke-width="6" stroke-linecap="round"/>
+                                <circle cx="34" cy="148" r="4.5" fill="var(--utbk-alarm-bell)"/>
+                                <circle cx="126" cy="148" r="4.5" fill="var(--utbk-alarm-bell)"/>
+
+                                <!-- Left & Right Bells -->
+                                <g class="alarm-bell-left">
+                                    <path d="M30 38C34 26 50 24 58 32C52 44 40 46 30 38Z" fill="var(--utbk-alarm-bell)" stroke="var(--utbk-calling-title)" stroke-width="2.5"/>
+                                    <circle cx="44" cy="33" r="3" fill="#ffffff" opacity="0.7"/>
+                                </g>
+                                <g class="alarm-bell-right">
+                                    <path d="M130 38C126 26 110 24 102 32C108 44 120 46 130 38Z" fill="var(--utbk-alarm-bell)" stroke="var(--utbk-calling-title)" stroke-width="2.5"/>
+                                    <circle cx="116" cy="33" r="3" fill="#ffffff" opacity="0.7"/>
+                                </g>
+
+                                <!-- Hammer -->
+                                <path d="M72 26H88V36H72V26Z" fill="var(--utbk-calling-title)"/>
+                                <circle class="alarm-hammer" cx="80" cy="22" r="5" fill="var(--utbk-alarm-bell)"/>
+
+                                <!-- Clock Body Outer -->
+                                <circle cx="80" cy="85" r="52" fill="var(--utbk-alarm-body-gradient-start)" stroke="var(--utbk-calling-title)" stroke-width="6"/>
+                                <!-- Clock Body Inner Face -->
+                                <circle cx="80" cy="85" r="45" fill="var(--utbk-alarm-body-gradient-end)" stroke="var(--utbk-alarm-face-border)" stroke-width="2.5"/>
+
+                                <!-- Hour Marks -->
+                                <line x1="80" y1="46" x2="80" y2="52" stroke="var(--utbk-calling-title)" stroke-width="3" stroke-linecap="round"/>
+                                <line x1="80" y1="118" x2="80" y2="124" stroke="var(--utbk-calling-title)" stroke-width="3" stroke-linecap="round"/>
+                                <line x1="41" y1="85" x2="47" y2="85" stroke="var(--utbk-calling-title)" stroke-width="3" stroke-linecap="round"/>
+                                <line x1="113" y1="85" x2="119" y2="85" stroke="var(--utbk-calling-title)" stroke-width="3" stroke-linecap="round"/>
+                                
+                                <!-- Clock Hands -->
+                                <line x1="80" y1="85" x2="62" y2="68" stroke="var(--utbk-alarm-hands)" stroke-width="4.5" stroke-linecap="round"/>
+                                <line x1="80" y1="85" x2="102" y2="60" stroke="var(--utbk-alarm-hands)" stroke-width="3.5" stroke-linecap="round"/>
+                                <line x1="80" y1="85" x2="66" y2="104" stroke="#ef4444" stroke-width="1.8" stroke-linecap="round"/>
+
+                                <!-- Center Pin -->
+                                <circle cx="80" cy="85" r="4.5" fill="#ef4444"/>
+                                <circle cx="80" cy="85" r="2" fill="#ffffff"/>
+                            </svg>
+                        </div>
+                    </div>
+                    
+                    <!-- Motivation Quote Card -->
+                    <div class="w-full xl:w-72 bg-slate-50 dark:bg-slate-800/50 border-l-4 border-amber-500 p-4 rounded-r-2xl border-y border-r border-slate-200 dark:border-slate-700/60 flex flex-col justify-center">
+                        <h4 class="font-extrabold text-amber-600 dark:text-amber-400 text-[11px] uppercase tracking-wider mb-1 flex items-center gap-1.5">
+                            <i data-lucide="quote" class="w-3.5 h-3.5"></i> Motivasi Hari Ini
+                        </h4>
+                        <p id="dash-motivation" class="text-slate-600 dark:text-slate-300 italic text-xs font-medium leading-relaxed">"Belum ada motivasi yang diatur di Pengaturan."</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Metric Cards -->
+            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+                <div class="bg-white dark:bg-slate-900 p-5 rounded-2xl border border-slate-200/80 dark:border-slate-800/80 flex items-center space-x-4 shadow-sm">
+                    <div class="p-3 bg-blue-500/10 text-blue-500 rounded-xl"><i data-lucide="clock" class="w-5 h-5"></i></div>
+                    <div><p class="text-xs text-slate-500 font-medium">Total Waktu Belajar</p><h3 class="text-lg font-bold mt-0.5 text-slate-900 dark:text-white" id="dash-total-time">0 Jam</h3></div>
+                </div>
+                <div class="bg-white dark:bg-slate-900 p-5 rounded-2xl border border-slate-200/80 dark:border-slate-800/80 flex items-center space-x-4 shadow-sm">
+                    <div class="p-3 bg-emerald-500/10 text-emerald-500 rounded-xl"><i data-lucide="check-circle" class="w-5 h-5"></i></div>
+                    <div><p class="text-xs text-slate-500 font-medium">Soal Dikerjakan</p><h3 class="text-lg font-bold mt-0.5 text-slate-900 dark:text-white" id="dash-total-questions">0 Soal</h3></div>
+                </div>
+                <div class="bg-white dark:bg-slate-900 p-5 rounded-2xl border border-slate-200/80 dark:border-slate-800/80 flex items-center space-x-4 shadow-sm">
+                    <div class="p-3 bg-purple-500/10 text-purple-500 rounded-xl"><i data-lucide="award" class="w-5 h-5"></i></div>
+                    <div><p class="text-xs text-slate-500 font-medium">TO UTBK Diikuti</p><h3 class="text-lg font-bold mt-0.5 text-slate-900 dark:text-white" id="dash-total-to">0 Kali</h3></div>
+                </div>
+                <div class="bg-white dark:bg-slate-900 p-5 rounded-2xl border border-slate-200/80 dark:border-slate-800/80 flex items-center space-x-4 shadow-sm">
+                    <div class="p-3 bg-rose-500/10 text-rose-500 rounded-xl"><i data-lucide="trending-up" class="w-5 h-5"></i></div>
+                    <div><p class="text-xs text-slate-500 font-medium">Rata-rata Skor UTBK</p><h3 class="text-lg font-bold mt-0.5 text-slate-900 dark:text-white" id="dash-avg-score">0</h3></div>
+                </div>
+            </div>
+
+            <!-- Recent Activity & Streak -->
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                <div class="bg-white dark:bg-slate-900 p-6 rounded-2xl border border-slate-200/80 dark:border-slate-800/80 shadow-sm">
+                    <h3 class="font-bold text-sm mb-4 text-slate-900 dark:text-white flex items-center gap-2"><i data-lucide="activity" class="w-4 h-4 text-indigo-500"></i> Aktivitas Terakhir</h3>
+                    <div class="space-y-3" id="dash-recent-list">
+                        <p class="text-slate-400 text-xs italic">Belum ada catatan aktivitas belajar.</p>
+                    </div>
+                </div>
+                <div class="bg-white dark:bg-slate-900 p-6 rounded-2xl border border-slate-200/80 dark:border-slate-800/80 shadow-sm flex flex-col justify-between">
+                    <div>
+                        <h3 class="font-bold text-sm text-slate-900 dark:text-white mb-1 flex items-center gap-2"><i data-lucide="flame" class="w-4 h-4 text-amber-500"></i> Streak Belajar Aktif</h3>
+                        <p class="text-xs text-slate-500 mb-4">Konsistensi harian berdasarkan log belajar yang tersimpan.</p>
+                        <div class="text-center py-6 bg-slate-50 dark:bg-slate-950/60 rounded-xl border border-slate-200 dark:border-slate-800/80">
+                            <span class="text-3xl font-black text-amber-500 tracking-tight" id="dash-streak">0 Hari</span>
+                        </div>
+                    </div>
+                    <!-- Redirects to Belajar Harian (Tab 4) since Mulai Belajar was removed -->
+                    <button onclick="window.switchTab(4)" class="mt-5 w-full bg-indigo-600 hover:bg-indigo-500 text-white py-2.5 rounded-xl font-bold transition duration-200 text-xs shadow-md shadow-indigo-500/10">Catat Belajar Harian Sekarang</button>
+                </div>
+            </div>
+        </section>
+
+        <!-- ================= PAGE 2: KALENDER BELAJAR ================= -->
+        <section id="page-2" class="hidden space-y-6">
+            <div class="bg-white dark:bg-slate-900 p-6 rounded-2xl border border-slate-200/80 dark:border-slate-800/80 shadow-sm">
+                <div class="flex flex-col md:flex-row justify-between items-start md:items-center mb-6 gap-4 border-b border-slate-100 dark:border-slate-800 pb-4">
+                    <div>
+                        <h2 class="text-lg font-bold flex items-center gap-2 text-slate-900 dark:text-white">
+                            <i data-lucide="calendar" class="w-5 h-5 text-emerald-500"></i> Kalender Belajar & Dokumentasi Foto
+                        </h2>
+                        <p class="text-xs text-slate-500 dark:text-slate-400 mt-0.5">
+                            Status Hari: <span class="text-rose-500 font-bold">Merah</span> (Off/Tidak Belajar), <span class="text-emerald-500 font-bold">Hijau</span> (Belajar Harian), <span class="text-purple-500 font-bold">Ungu</span> (Ada Tryout).
+                        </p>
+                    </div>
+                    <div class="flex items-center space-x-2 self-end md:self-auto">
+                        <button onclick="window.changeMonth(-1)" class="p-2 bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 rounded-xl text-slate-700 dark:text-slate-200 transition"><i data-lucide="chevron-left" class="w-4 h-4"></i></button>
+                        <span id="calendar-month-year" class="font-bold text-sm min-w-[130px] text-center text-slate-800 dark:text-slate-200"></span>
+                        <button onclick="window.changeMonth(1)" class="p-2 bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 rounded-xl text-slate-700 dark:text-slate-200 transition"><i data-lucide="chevron-right" class="w-4 h-4"></i></button>
+                    </div>
+                </div>
+
+                <div class="grid grid-cols-7 gap-2 text-center font-bold text-[11px] text-slate-400 uppercase tracking-wider mb-2">
+                    <div>Min</div><div>Sen</div><div>Sel</div><div>Rab</div><div>Kam</div><div>Jum</div><div>Sab</div>
+                </div>
+                <div id="calendar-grid" class="grid grid-cols-7 gap-2"></div>
+            </div>
+
+            <!-- Calendar Detail Card -->
+            <div id="calendar-detail-card" class="hidden bg-white dark:bg-slate-900 p-6 rounded-2xl border border-slate-200 dark:border-slate-800 shadow-2xl space-y-5">
+                <div class="flex justify-between items-center border-b border-slate-200 dark:border-slate-800 pb-3">
+                    <h3 class="font-bold text-base text-slate-900 dark:text-white" id="detail-date-title">Detail Tanggal</h3>
+                    <button onclick="window.closeDetailCard()" class="text-slate-400 hover:text-slate-200 p-1"><i data-lucide="x" class="w-5 h-5"></i></button>
+                </div>
+
+                <div id="detail-content" class="space-y-4"></div>
+
+                <div class="border-t border-slate-200 dark:border-slate-800 pt-4">
+                    <button onclick="window.openCalendarAddForm()" class="w-full bg-emerald-600 hover:bg-emerald-500 text-white py-2.5 rounded-xl text-xs font-bold transition flex items-center justify-center gap-1.5 shadow-md shadow-emerald-500/10">
+                        <i data-lucide="plus" class="w-4 h-4"></i> Tambah Aktivitas & Foto
+                    </button>
+
+                    <form id="calendar-add-form" onsubmit="window.saveCalendarSession(event)" class="hidden mt-4 space-y-3 bg-slate-50 dark:bg-slate-950 p-4 rounded-xl border border-slate-200 dark:border-slate-800">
+                        <input type="hidden" id="cal-selected-date" value="">
+                        <input type="hidden" id="cal-edit-id" value="">
+                        <div>
+                            <label class="block text-[10px] font-bold uppercase text-slate-400 mb-1">Mata Pelajaran</label>
+                            <select id="cal-category" class="w-full bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-xl px-3 py-2 text-xs"></select>
+                        </div>
+                        <div class="grid grid-cols-2 gap-2">
+                            <div>
+                                <label class="block text-[10px] font-bold uppercase text-slate-400 mb-1">Durasi (Jam)</label>
+                                <input type="number" step="0.1" id="cal-duration" placeholder="1.0" required class="w-full bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-xl px-3 py-2 text-xs">
+                            </div>
+                            <div>
+                                <label class="block text-[10px] font-bold uppercase text-slate-400 mb-1">Jumlah Soal</label>
+                                <input type="number" id="cal-questions" placeholder="0" class="w-full bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-xl px-3 py-2 text-xs">
+                            </div>
+                        </div>
+                        <div>
+                            <label class="block text-[10px] font-bold uppercase text-slate-400 mb-1">Judul / Sumber Belajar</label>
+                            <input type="text" id="cal-title" placeholder="Contoh: Latihan Bab 2" class="w-full bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-xl px-3 py-2 text-xs">
+                        </div>
+                        <div>
+                            <label class="block text-[10px] font-bold uppercase text-slate-400 mb-1">Catatan</label>
+                            <textarea id="cal-notes" rows="2" placeholder="Catatan singkat..." class="w-full bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-xl px-3 py-2 text-xs"></textarea>
+                        </div>
+                        <div id="cal-photo-hint" class="text-[10px] text-amber-500 font-bold hidden mb-1">Mengunggah foto baru akan menimpa foto lama. Biarkan kosong jika tidak ingin mengganti foto.</div>
+                        <div>
+                            <label class="block text-[10px] font-bold uppercase text-slate-400 mb-1">Foto Kegiatan / Soal (Bisa Multiple)</label>
+                            <input type="file" id="cal-photos" accept="image/*" multiple class="w-full text-xs text-slate-500">
+                        </div>
+                        <div class="flex gap-2">
+                            <button type="button" onclick="window.closeCalendarAddForm()" class="w-1/3 bg-slate-200 dark:bg-slate-800 text-slate-700 dark:text-slate-300 py-2.5 rounded-xl text-xs font-bold transition">Batal</button>
+                            <button type="submit" id="cal-submit-btn" class="w-2/3 bg-indigo-600 hover:bg-indigo-500 text-white py-2.5 rounded-xl text-xs font-bold transition">Simpan Aktivitas</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </section>
+
+        <!-- ================= PAGE 4: BELAJAR HARIAN ================= -->
+        <section id="page-4" class="hidden space-y-6">
+            <div class="bg-white dark:bg-slate-900 p-6 rounded-2xl border border-slate-200/80 dark:border-slate-800/80 shadow-sm">
+                <h2 class="text-base font-bold text-slate-900 dark:text-white mb-4 flex items-center gap-2">
+                    <i data-lucide="book-open" class="w-5 h-5 text-cyan-500"></i> Form Catatan Belajar Harian
+                </h2>
+                <form onsubmit="window.saveStudySession(event)" class="space-y-4">
+                    <input type="hidden" id="edit-study-id" value="">
+                    
+                    <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                        <div>
+                            <label class="block text-[11px] font-bold uppercase text-slate-400 mb-1">Tanggal</label>
+                            <input type="date" id="study-date" required class="w-full bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800 rounded-xl px-3 py-2 text-xs text-slate-800 dark:text-slate-200">
+                        </div>
+                        <div>
+                            <label class="block text-[11px] font-bold uppercase text-slate-400 mb-1">Durasi Belajar (Jam)</label>
+                            <input type="number" id="study-duration-hours" step="0.1" min="0" placeholder="Contoh: 1.5" required class="w-full bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800 rounded-xl px-3 py-2 text-xs text-slate-800 dark:text-slate-200">
+                        </div>
+                        <div>
+                            <label class="block text-[11px] font-bold uppercase text-slate-400 mb-1">Lokasi Belajar</label>
+                            <input type="text" id="study-location" placeholder="Rumah / Perpustakaan" class="w-full bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800 rounded-xl px-3 py-2 text-xs text-slate-800 dark:text-slate-200">
+                        </div>
+                    </div>
+
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <div>
+                            <label class="block text-[11px] font-bold uppercase text-slate-400 mb-1">Mata Pelajaran / Subtes</label>
+                            <select id="study-category" class="w-full bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800 rounded-xl px-3 py-2 text-xs text-slate-800 dark:text-slate-200"></select>
+                        </div>
+                        <div>
+                            <label class="block text-[11px] font-bold uppercase text-slate-400 mb-1">Jumlah Soal Dikerjakan</label>
+                            <input type="number" id="study-questions" min="0" placeholder="0" class="w-full bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800 rounded-xl px-3 py-2 text-xs text-slate-800 dark:text-slate-200">
+                        </div>
+                    </div>
+
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <div>
+                            <label class="block text-[11px] font-bold uppercase text-slate-400 mb-1">Judul Buku / Sumber Belajar</label>
+                            <input type="text" id="book-title" placeholder="Nama buku atau modul..." class="w-full bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800 rounded-xl px-3 py-2 text-xs text-slate-800 dark:text-slate-200">
+                        </div>
+                        <div>
+                            <label class="block text-[11px] font-bold uppercase text-slate-400 mb-1">Halaman / Bab Dituntaskan</label>
+                            <input type="text" id="book-pages" placeholder="Contoh: Hal 12-30 / Bab 3" class="w-full bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800 rounded-xl px-3 py-2 text-xs text-slate-800 dark:text-slate-200">
+                        </div>
+                    </div>
+
+                    <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                        <div>
+                            <label class="block text-[11px] font-bold uppercase text-slate-400 mb-1">Foto Sampul Buku</label>
+                            <input type="file" id="book-cover-photo" accept="image/*" class="w-full text-xs text-slate-500 font-medium">
+                        </div>
+                        <div>
+                            <label class="block text-[11px] font-bold uppercase text-slate-400 mb-1">Foto Belajar (Multiple)</label>
+                            <input type="file" id="study-photos" accept="image/*" multiple class="w-full text-xs text-slate-500 font-medium">
+                        </div>
+                        <div>
+                            <label class="block text-[11px] font-bold uppercase text-slate-400 mb-1">Foto Soal / Catatan (Multiple)</label>
+                            <input type="file" id="question-photos" accept="image/*" multiple class="w-full text-xs text-slate-500 font-medium">
+                        </div>
+                    </div>
+
+                    <div>
+                        <label class="block text-[11px] font-bold uppercase text-slate-400 mb-1">Catatan Tambahan & Evaluasi</label>
+                        <textarea id="study-notes" rows="3" placeholder="Pelajaran penting atau bagian yang masih bingung..." class="w-full bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800 rounded-xl px-3 py-2 text-xs text-slate-800 dark:text-slate-200"></textarea>
+                    </div>
+
+                    <button type="submit" id="main-study-submit-btn" class="w-full bg-cyan-600 hover:bg-cyan-500 text-white py-2.5 rounded-xl font-bold transition text-xs shadow-md shadow-cyan-500/10">Simpan Log Belajar</button>
+                </form>
+            </div>
+        </section>
+
+        <!-- ================= PAGE 5: BANK KESALAHAN ================= -->
+        <section id="page-5" class="hidden space-y-6">
+            <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+                <div class="lg:col-span-1 bg-white dark:bg-slate-900 p-6 rounded-2xl border border-slate-200/80 dark:border-slate-800/80 shadow-sm">
+                    <h3 class="font-bold text-sm text-slate-900 dark:text-white mb-3 flex items-center gap-2">
+                        <i data-lucide="circle-x" class="w-4 h-4 text-rose-500"></i> Catat Kesalahan Soal
+                    </h3>
+                    <form onsubmit="window.saveMistake(event)" class="space-y-3">
+                        <div>
+                            <label class="block text-[11px] font-bold uppercase text-slate-400 mb-1">Subtes / Mapel</label>
+                            <select id="mistake-subtest" class="w-full bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800 rounded-xl px-3 py-2 text-xs text-slate-800 dark:text-slate-200"></select>
+                        </div>
+                        <div>
+                            <label class="block text-[11px] font-bold uppercase text-slate-400 mb-1">Topik / Materi Soal</label>
+                            <input type="text" id="mistake-material" placeholder="Contoh: Silogisme / Trik Geometri" required class="w-full bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800 rounded-xl px-3 py-2 text-xs text-slate-800 dark:text-slate-200">
+                        </div>
+                        <div>
+                            <label class="block text-[11px] font-bold uppercase text-slate-400 mb-1">Ringkasan Soal</label>
+                            <textarea id="mistake-question" rows="2" placeholder="Garis besar pertanyaan..." required class="w-full bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800 rounded-xl px-3 py-2 text-xs text-slate-800 dark:text-slate-200"></textarea>
+                        </div>
+                        <div>
+                            <label class="block text-[11px] font-bold uppercase text-slate-400 mb-1">Penyelesaian / Solusi</label>
+                            <input type="text" id="mistake-answer" placeholder="Cara cepat atau rumusnya..." required class="w-full bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800 rounded-xl px-3 py-2 text-xs text-slate-800 dark:text-slate-200">
+                        </div>
+                        <div>
+                            <label class="block text-[11px] font-bold uppercase text-slate-400 mb-1">Penyebab Salah</label>
+                            <select id="mistake-reason" class="w-full bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800 rounded-xl px-3 py-2 text-xs text-slate-800 dark:text-slate-200">
+                                <option value="Kurang Teliti">Kurang Teliti / Ceroboh</option>
+                                <option value="Lupa Rumus">Lupa Rumus / Konsep</option>
+                                <option value="Kehabisan Waktu">Kehabisan Waktu</option>
+                                <option value="Belum Pernah Belajar">Materi Belum Dipelajari</option>
+                            </select>
+                        </div>
+                        <button type="submit" class="w-full bg-rose-600 hover:bg-rose-500 text-white py-2 rounded-xl font-bold text-xs transition">Simpan ke Bank Salah</button>
+                    </form>
+                </div>
+
+                <div class="lg:col-span-2 space-y-6">
+                    <div class="bg-white dark:bg-slate-900 p-6 rounded-2xl border border-slate-200/80 dark:border-slate-800/80 shadow-sm">
+                        <h3 class="font-bold text-sm text-slate-900 dark:text-white mb-3 flex items-center gap-2">
+                            <i data-lucide="flame" class="w-4 h-4 text-amber-500"></i> Topik Paling Sering Salah (Peringkat Kelemahan)
+                        </h3>
+                        <div id="mistake-ranking" class="space-y-2"></div>
+                    </div>
+
+                    <div class="bg-white dark:bg-slate-900 p-6 rounded-2xl border border-slate-200/80 dark:border-slate-800/80 shadow-sm">
+                        <h3 class="font-bold text-sm text-slate-900 dark:text-white mb-3 flex items-center gap-2">
+                            <i data-lucide="list" class="w-4 h-4 text-rose-500"></i> Daftar Kesalahan Dicatat
+                        </h3>
+                        <div id="mistake-list" class="space-y-3 max-h-80 overflow-y-auto custom-scrollbar"></div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- ================= PAGE 6: TRYOUT ================= -->
+        <section id="page-6" class="hidden space-y-6">
+            <div class="bg-white dark:bg-slate-900 p-3 rounded-2xl border border-slate-200/80 dark:border-slate-800/80 shadow-sm flex items-center justify-center gap-2">
+                <button onclick="window.setTOType('utbk')" id="to-tab-utbk" class="flex-1 py-2.5 px-4 rounded-xl font-bold text-xs transition-all duration-200 text-center bg-indigo-600 text-white shadow-md">
+                    Tryout UTBK
+                </button>
+                <button onclick="window.setTOType('inten')" id="to-tab-inten" class="flex-1 py-2.5 px-4 rounded-xl font-bold text-xs transition-all duration-200 text-center bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-slate-100">
+                    Tryout Mapel INTEN
+                </button>
+            </div>
+
+            <div class="bg-white dark:bg-slate-900 p-6 rounded-2xl border border-slate-200/80 dark:border-slate-800/80 shadow-sm">
+                <h2 class="text-base font-bold text-slate-900 dark:text-white mb-4 flex items-center gap-2" id="to-form-title">
+                    <i data-lucide="file-check-2" class="w-5 h-5 text-purple-500"></i> Input Nilai Tryout UTBK
+                </h2>
+                
+                <form onsubmit="window.saveTOSession(event)" class="space-y-4">
+                    <input type="hidden" id="edit-to-id" value="">
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <div>
+                            <label class="block text-[11px] font-bold uppercase text-slate-400 mb-1">Nama / Penyelenggara TO</label>
+                            <input type="text" id="to-title" placeholder="Contoh: TO #1 INTEN / GO" required class="w-full bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800 rounded-xl px-3 py-2 text-xs text-slate-800 dark:text-slate-200">
+                        </div>
+                        <div>
+                            <label class="block text-[11px] font-bold uppercase text-slate-400 mb-1">Tanggal TO</label>
+                            <input type="date" id="to-date" required class="w-full bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800 rounded-xl px-3 py-2 text-xs text-slate-800 dark:text-slate-200">
+                        </div>
+                    </div>
+
+                    <div id="to-inputs-container"></div>
+
+                    <div class="p-4 bg-indigo-50 dark:bg-indigo-950/40 rounded-xl border border-indigo-200 dark:border-indigo-800/50 flex justify-between items-center">
+                        <div>
+                            <p class="text-[11px] font-bold text-indigo-500 uppercase">Preview Rata-rata Skor</p>
+                            <span class="text-2xl font-black text-indigo-600 dark:text-indigo-400" id="to-avg-preview">0</span>
+                        </div>
+                    </div>
+
+                    <div>
+                        <label class="block text-[11px] font-bold uppercase text-slate-400 mb-1">Evaluasi / Hambatan Pengerjaan</label>
+                        <textarea id="to-notes" rows="2" placeholder="Catatan kekurangan waktu, topik yang kurang dipahami..." class="w-full bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800 rounded-xl px-3 py-2 text-xs text-slate-800 dark:text-slate-200"></textarea>
+                    </div>
+
+                    <div class="flex gap-2">
+                        <button type="button" onclick="window.resetTOForm()" class="hidden w-1/3 bg-slate-200 dark:bg-slate-800 text-slate-700 dark:text-slate-300 py-2.5 rounded-xl font-bold transition text-xs" id="to-cancel-btn">Batal Edit</button>
+                        <button type="submit" id="to-submit-btn" class="w-full bg-purple-600 hover:bg-purple-500 text-white py-2.5 rounded-xl font-bold transition text-xs shadow-md shadow-purple-500/10">Simpan Nilai Tryout</button>
+                    </div>
+                </form>
+            </div>
+
+            <div class="bg-white dark:bg-slate-900 p-6 rounded-2xl border border-slate-200/80 dark:border-slate-800/80 shadow-sm">
+                <h3 class="font-bold text-sm text-slate-900 dark:text-white mb-4 flex items-center gap-2" id="to-history-title">
+                    <i data-lucide="history" class="w-4 h-4 text-indigo-500"></i> Riwayat Tryout
+                </h3>
+                <div id="to-history-list" class="space-y-3"></div>
+            </div>
+        </section>
+
+        <!-- ================= PAGE 7: PROGRESS SAYA ================= -->
+        <section id="page-7" class="hidden space-y-6">
+            <div class="bg-white dark:bg-slate-900 p-3 rounded-2xl border border-slate-200/80 dark:border-slate-800/80 shadow-sm flex items-center justify-center gap-2">
+                <button onclick="window.setProgressType('utbk')" id="progress-tab-utbk" class="flex-1 py-2.5 px-4 rounded-xl font-bold text-xs transition-all duration-200 text-center bg-indigo-600 text-white shadow-md">
+                    Progress UTBK
+                </button>
+                <button onclick="window.setProgressType('inten')" id="progress-tab-inten" class="flex-1 py-2.5 px-4 rounded-xl font-bold text-xs transition-all duration-200 text-center bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-slate-100">
+                    Progress Mapel INTEN
+                </button>
+            </div>
+
+            <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+                <div class="lg:col-span-2 bg-gradient-to-br from-indigo-600 to-violet-700 text-white p-6 rounded-2xl shadow-lg shadow-indigo-500/10">
+                    <p class="text-[11px] font-bold uppercase tracking-wider text-indigo-200">Progress Menuju Target Skor</p>
+                    <div class="flex items-end gap-3 mt-1">
+                        <h3 class="text-3xl font-black"><span id="dash-progress-percent">0</span>%</h3>
+                        <p class="text-xs text-indigo-200 pb-1 font-medium">dari target <span id="dash-progress-target">0</span></p>
+                    </div>
+                    <div class="mt-4 h-3 rounded-full bg-white/20 overflow-hidden">
+                        <div id="dash-progress-bar" class="h-full bg-white rounded-full transition-all duration-500" style="width: 0%"></div>
+                    </div>
+                </div>
+
+                <div class="bg-white dark:bg-slate-900 p-6 rounded-2xl border border-slate-200/80 dark:border-slate-800/80 shadow-sm flex flex-col justify-between">
+                    <div>
+                        <h4 class="font-bold text-xs text-slate-400 uppercase tracking-wider mb-1">Analisis Otomatis</h4>
+                        <h3 class="text-sm font-bold text-slate-900 dark:text-white" id="progress-analysis-title">Kelemahan Utama</h3>
+                        <p class="text-xs text-slate-500 mt-2 leading-relaxed" id="progress-analysis-desc">Sistem akan menganalisis subtes terendah dari riwayat TO kamu.</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                <div class="bg-white dark:bg-slate-900 p-6 rounded-2xl border border-slate-200/80 dark:border-slate-800/80 shadow-sm">
+                    <h3 class="font-bold text-sm text-slate-900 dark:text-white mb-4 flex items-center gap-2" id="trend-chart-title">
+                        <i data-lucide="trending-up" class="w-4 h-4 text-indigo-500"></i> Trend Rata-Rata Skor
+                    </h3>
+                    <div class="relative h-64">
+                        <canvas id="toTrendChart"></canvas>
+                    </div>
+                </div>
+
+                <div class="bg-white dark:bg-slate-900 p-6 rounded-2xl border border-slate-200/80 dark:border-slate-800/80 shadow-sm">
+                    <h3 class="font-bold text-sm text-slate-900 dark:text-white mb-4 flex items-center gap-2" id="detail-chart-title">
+                        <i data-lucide="bar-chart-2" class="w-4 h-4 text-purple-500"></i> Grafik Detail Subtes
+                    </h3>
+                    <div class="relative h-64">
+                        <canvas id="subtestTrendChart"></canvas>
+                    </div>
+                </div>
+            </div>
+
+            <div class="bg-white dark:bg-slate-900 p-6 rounded-2xl border border-slate-200/80 dark:border-slate-800/80 shadow-sm">
+                <h3 class="font-bold text-sm text-slate-900 dark:text-white mb-4 flex items-center gap-2">
+                    <i data-lucide="pie-chart" class="w-4 h-4 text-emerald-500"></i> Distribusi Waktu Belajar Per Kategori
+                </h3>
+                <div class="relative h-64 max-w-md mx-auto">
+                    <canvas id="categoryChart"></canvas>
+                </div>
+            </div>
+        </section>
+
+        <!-- ================= PAGE 8: PENCAPAIAN ================= -->
+        <section id="page-8" class="hidden space-y-6">
+            <div class="bg-white dark:bg-slate-900 p-6 rounded-2xl border border-slate-200/80 dark:border-slate-800/80 shadow-sm">
+                <div class="flex items-center justify-between mb-4">
+                    <h2 class="text-base font-bold text-slate-900 dark:text-white flex items-center gap-2">
+                        <i data-lucide="award" class="w-5 h-5 text-amber-500"></i> Pencapaian & Lencana Kamu
+                    </h2>
+                    <button onclick="window.switchTab(9)" class="text-xs font-semibold text-indigo-600 dark:text-indigo-400 hover:underline flex items-center gap-1">
+                        <i data-lucide="settings" class="w-3.5 h-3.5"></i> Kelola di Pengaturan
+                    </button>
+                </div>
+                <div id="badges-grid" class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-4"></div>
+            </div>
+        </section>
+
+        <!-- ================= PAGE 9: PENGATURAN ================= -->
+        <section id="page-9" class="hidden space-y-6">
+            <!-- Profil & Target -->
+            <div class="bg-white dark:bg-slate-900 p-6 rounded-2xl border border-slate-200/80 dark:border-slate-800/80 shadow-sm">
+                <h2 class="text-base font-bold text-slate-900 dark:text-white mb-4 flex items-center gap-2">
+                    <i data-lucide="user" class="w-5 h-5 text-indigo-500"></i> Profil & Target Belajar
+                </h2>
+                <form onsubmit="window.saveSettings(event)" class="space-y-4 max-w-xl">
+                    <div>
+                        <label class="block text-[11px] font-bold uppercase text-slate-400 mb-1">Nama Kamu</label>
+                        <input type="text" id="set-name" placeholder="Nama Lengkap" class="w-full bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800 rounded-xl px-3 py-2 text-xs text-slate-800 dark:text-slate-200">
+                    </div>
+                    <div>
+                        <label class="block text-[11px] font-bold uppercase text-slate-400 mb-1">Universitas Impian</label>
+                        <input type="text" id="set-univ" placeholder="Contoh: Universitas Gadjah Mada" class="w-full bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800 rounded-xl px-3 py-2 text-xs text-slate-800 dark:text-slate-200">
+                    </div>
+                    <div>
+                        <label class="block text-[11px] font-bold uppercase text-slate-400 mb-1">Jurusan Impian</label>
+                        <input type="text" id="set-major" placeholder="Contoh: Manajemen / Akuntansi" class="w-full bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800 rounded-xl px-3 py-2 text-xs text-slate-800 dark:text-slate-200">
+                    </div>
+                    <div>
+                        <label class="block text-[11px] font-bold uppercase text-slate-400 mb-1">Target Skor UTBK</label>
+                        <input type="number" id="set-score" placeholder="Contoh: 750" class="w-full bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800 rounded-xl px-3 py-2 text-xs text-slate-800 dark:text-slate-200">
+                    </div>
+                    <div>
+                        <label class="block text-[11px] font-bold uppercase text-slate-400 mb-1">Logo Universitas Target</label>
+                        <input type="file" id="set-logo" accept="image/*" class="w-full text-xs text-slate-500 font-medium">
+                    </div>
+                    <div>
+                        <label class="block text-[11px] font-bold uppercase text-slate-400 mb-1">Kata Motivasi Diri</label>
+                        <textarea id="set-motivation" rows="3" placeholder="Tulis kalimat motivasi kamu di sini..." class="w-full bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800 rounded-xl px-3 py-2 text-xs text-slate-800 dark:text-slate-200"></textarea>
+                    </div>
+                    <button type="submit" class="w-full bg-indigo-600 hover:bg-indigo-500 text-white py-2.5 rounded-xl font-bold transition text-xs shadow-md shadow-indigo-500/10">Simpan Pengaturan Profil</button>
+                </form>
+            </div>
+
+            <!-- FITUR 1: MATA PELAJARAN DI PENGATURAN -->
+            <div class="bg-white dark:bg-slate-900 p-6 rounded-2xl border border-slate-200/80 dark:border-slate-800/80 shadow-sm space-y-4">
+                <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3 border-b border-slate-100 dark:border-slate-800 pb-4">
+                    <div>
+                        <h2 class="text-base font-bold text-slate-900 dark:text-white flex items-center gap-2">
+                            <i data-lucide="book" class="w-5 h-5 text-indigo-500"></i> Kelola Mata Pelajaran
+                        </h2>
+                        <p class="text-xs text-slate-500 dark:text-slate-400 mt-0.5">
+                            Kelola daftar mata pelajaran untuk form belajar, kalender, dan bank soal.
+                        </p>
+                    </div>
+                    <button onclick="window.openAddSubjectModal()" class="bg-indigo-600 hover:bg-indigo-500 text-white px-4 py-2 rounded-xl text-xs font-bold transition flex items-center gap-1.5 shadow-md shadow-indigo-500/10">
+                        <i data-lucide="plus" class="w-4 h-4"></i> Tambah Mata Pelajaran
+                    </button>
+                </div>
+                <div id="settings-subject-list" class="space-y-2 max-h-80 overflow-y-auto custom-scrollbar"></div>
+            </div>
+
+            <!-- FITUR 2: KELOLA PENCAPAIAN DI PENGATURAN -->
+            <div class="bg-white dark:bg-slate-900 p-6 rounded-2xl border border-slate-200/80 dark:border-slate-800/80 shadow-sm space-y-4">
+                <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3 border-b border-slate-100 dark:border-slate-800 pb-4">
+                    <div>
+                        <h2 class="text-base font-bold text-slate-900 dark:text-white flex items-center gap-2">
+                            <i data-lucide="award" class="w-5 h-5 text-amber-500"></i> Kelola Pencapaian Custom
+                        </h2>
+                        <p class="text-xs text-slate-500 dark:text-slate-400 mt-0.5">
+                            Buat target atau pencapaian khusus sesuai kebutuhan belajarmu.
+                        </p>
+                    </div>
+                    <button onclick="window.openAddAchievementModal()" class="bg-amber-600 hover:bg-amber-500 text-white px-4 py-2 rounded-xl text-xs font-bold transition flex items-center gap-1.5 shadow-md shadow-amber-500/10">
+                        <i data-lucide="plus" class="w-4 h-4"></i> Tambah Pencapaian
+                    </button>
+                </div>
+                <div id="settings-achievement-list" class="space-y-2 max-h-80 overflow-y-auto custom-scrollbar"></div>
+            </div>
+
+            <!-- Backup & Export/Import -->
+            <div class="bg-white dark:bg-slate-900 p-6 rounded-2xl border border-slate-200/80 dark:border-slate-800/80 shadow-sm">
+                <h3 class="font-bold text-sm text-slate-900 dark:text-white mb-2 flex items-center gap-2">
+                    <i data-lucide="database" class="w-4 h-4 text-emerald-500"></i> Backup & Sinkronisasi Data
+                </h3>
+                <p class="text-xs text-slate-500 dark:text-slate-400 mb-4">
+                    Simpan backup seluruh data belajar kamu ke file JSON atau pulihkan data dari file sebelumnya.
+                </p>
+                <div class="flex flex-wrap gap-3">
+                    <button onclick="window.exportData()" class="bg-emerald-600 hover:bg-emerald-500 text-white px-4 py-2 rounded-xl text-xs font-bold transition flex items-center gap-2 shadow-sm">
+                        <i data-lucide="download" class="w-4 h-4"></i> Export Data JSON
+                    </button>
+                    <label class="bg-amber-600 hover:bg-amber-500 text-white px-4 py-2 rounded-xl text-xs font-bold cursor-pointer transition flex items-center gap-2 shadow-sm">
+                        <i data-lucide="upload" class="w-4 h-4"></i> Import Data JSON
+                        <input type="file" onchange="window.importData(event)" accept=".json" class="hidden">
+                    </label>
+                </div>
+            </div>
+        </section>
+
+        <!-- ================= PAGE 10: TENTANG ================= -->
+        <section id="page-10" class="hidden space-y-6">
+            <div class="bg-white dark:bg-slate-900 p-8 rounded-3xl border border-slate-200/80 dark:border-slate-800/80 shadow-sm max-w-2xl mx-auto text-center space-y-4">
+                <div class="w-16 h-16 brand-logo-badge rounded-2xl flex items-center justify-center mx-auto">
+                    <i data-lucide="graduation-cap" class="w-8 h-8 brand-logo-icon"></i>
+                </div>
+                <div>
+                    <h2 class="text-2xl font-black brand-logo-text tracking-tight">Belajarku</h2>
+                    <p class="text-xs font-bold brand-logo-sub mt-1 uppercase tracking-widest">UTBK Study Dashboard</p>
+                </div>
+                <p class="text-xs text-slate-500 dark:text-slate-400 leading-relaxed max-w-lg mx-auto">
+                    Belajarku adalah platform belajar yang dirancang untuk membantu mengatur kegiatan belajar, mencatat perkembangan, mengevaluasi hasil tryout, dan mempersiapkan UTBK dengan lebih terstruktur.
+                </p>
+                <div class="pt-4 border-t border-slate-100 dark:border-slate-800 text-[11px] text-slate-400 space-y-1">
+                    <p>Versi Dashboard: <span class="font-bold text-slate-600 dark:text-slate-300">5.0.0 (Modern Redesign)</span></p>
+                    <p>&copy; 2026 Belajarku. All rights reserved.</p>
+                </div>
+            </div>
+        </section>
+
+    </main>
+
+    <!-- Photo Lightbox (Petunjuk zoom dihapus per Requirement 8) -->
+    <div id="photo-lightbox" onclick="window.closeLightbox()" class="hidden fixed inset-0 z-[110] bg-slate-950/90 backdrop-blur-md flex items-center justify-center p-4">
+        <div class="relative max-w-4xl max-h-[90vh] w-full flex items-center justify-center overflow-hidden">
+            <button onclick="window.closeLightbox()" class="absolute top-2 right-2 z-10 bg-slate-800/80 text-white hover:text-slate-300 p-2 rounded-full">
+                <i data-lucide="x" class="w-6 h-6"></i>
+            </button>
+            <div id="lightbox-img-container" class="w-full h-full flex items-center justify-center">
+                <img id="lightbox-img" src="" class="max-w-full max-h-[85vh] object-contain rounded-2xl shadow-2xl select-none" onclick="event.stopPropagation()" draggable="false">
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal Konfirmasi Simpan Profil -->
+    <div id="confirm-settings-modal" class="hidden fixed inset-0 z-[120] bg-slate-950/70 backdrop-blur-sm flex items-center justify-center p-4">
+        <div class="bg-white dark:bg-slate-900 rounded-2xl border border-slate-200 dark:border-slate-800 shadow-2xl max-w-sm w-full p-6 space-y-4">
+            <div class="flex items-center gap-3">
+                <div class="w-10 h-10 rounded-full bg-indigo-500/10 text-indigo-500 flex items-center justify-center">
+                    <i data-lucide="help-circle" class="w-5 h-5"></i>
+                </div>
+                <h3 class="font-bold text-sm text-slate-900 dark:text-white">Konfirmasi Perubahan</h3>
+            </div>
+            <p class="text-xs text-slate-500 dark:text-slate-400">Yakin ingin menyimpan perubahan profil ini?</p>
+            <div class="flex gap-3 pt-1">
+                <button onclick="window.cancelSaveSettings()" class="flex-1 py-2.5 rounded-xl font-bold text-xs bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300 transition">Batal</button>
+                <button onclick="window.performSaveSettings()" class="flex-1 py-2.5 rounded-xl font-bold text-xs bg-indigo-600 hover:bg-indigo-500 text-white transition">Ya, Simpan</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal Konfirmasi Hapus TO -->
+    <div id="confirm-delete-to-modal" class="hidden fixed inset-0 z-[120] bg-slate-950/70 backdrop-blur-sm flex items-center justify-center p-4">
+        <div class="bg-white dark:bg-slate-900 rounded-2xl border border-slate-200 dark:border-slate-800 shadow-2xl max-w-sm w-full p-6 space-y-4">
+            <div class="flex items-center gap-3">
+                <div class="w-10 h-10 rounded-full bg-rose-500/10 text-rose-500 flex items-center justify-center">
+                    <i data-lucide="trash-2" class="w-5 h-5"></i>
+                </div>
+                <h3 class="font-bold text-sm text-slate-900 dark:text-white">Hapus Data TO?</h3>
+            </div>
+            <p class="text-xs text-slate-500 dark:text-slate-400">Apakah kamu yakin ingin menghapus data TO ini? Data yang dihapus tidak dapat dipulihkan.</p>
+            <div class="flex gap-3 pt-1">
+                <button onclick="window.cancelDeleteTO()" class="flex-1 py-2.5 rounded-xl font-bold text-xs bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300 transition">Batal</button>
+                <button onclick="window.performDeleteTO()" class="flex-1 py-2.5 rounded-xl font-bold text-xs bg-rose-600 hover:bg-rose-500 text-white transition">Ya, Hapus</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal Konfirmasi Hapus Kalender -->
+    <div id="confirm-delete-cal-modal" class="hidden fixed inset-0 z-[120] bg-slate-950/70 backdrop-blur-sm flex items-center justify-center p-4">
+        <div class="bg-white dark:bg-slate-900 rounded-2xl border border-slate-200 dark:border-slate-800 shadow-2xl max-w-sm w-full p-6 space-y-4">
+            <div class="flex items-center gap-3">
+                <div class="w-10 h-10 rounded-full bg-rose-500/10 text-rose-500 flex items-center justify-center">
+                    <i data-lucide="trash-2" class="w-5 h-5"></i>
+                </div>
+                <h3 class="font-bold text-sm text-slate-900 dark:text-white">Hapus Data Kalender?</h3>
+            </div>
+            <p class="text-xs text-slate-500 dark:text-slate-400">Apakah kamu yakin ingin menghapus aktivitas belajar ini? Data akan dihapus permanen.</p>
+            <div class="flex gap-3 pt-1">
+                <button onclick="window.cancelDeleteCal()" class="flex-1 py-2.5 rounded-xl font-bold text-xs bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300 transition">Batal</button>
+                <button onclick="window.performDeleteCal()" class="flex-1 py-2.5 rounded-xl font-bold text-xs bg-rose-600 hover:bg-rose-500 text-white transition">Ya, Hapus</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal Tambah/Edit Mata Pelajaran (Requirement 1) -->
+    <div id="subject-modal" class="hidden fixed inset-0 z-[120] bg-slate-950/70 backdrop-blur-sm flex items-center justify-center p-4">
+        <div class="bg-white dark:bg-slate-900 rounded-2xl border border-slate-200 dark:border-slate-800 shadow-2xl max-w-md w-full p-6 space-y-4">
+            <div class="flex justify-between items-center border-b border-slate-100 dark:border-slate-800 pb-3">
+                <h3 class="font-bold text-sm text-slate-900 dark:text-white" id="modal-subject-title">Tambah Mata Pelajaran</h3>
+                <button onclick="window.closeSubjectModal()" class="text-slate-400 hover:text-slate-200 p-1"><i data-lucide="x" class="w-5 h-5"></i></button>
+            </div>
+            <form onsubmit="window.saveSubjectModal(event)" class="space-y-4">
+                <input type="hidden" id="modal-subject-id" value="">
+                <div>
+                    <label class="block text-[11px] font-bold uppercase text-slate-400 mb-1">Nama Mata Pelajaran</label>
+                    <input type="text" id="modal-subject-name" placeholder="Contoh: Sosiologi / Geografi" required class="w-full bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800 rounded-xl px-3 py-2 text-xs text-slate-800 dark:text-slate-200">
+                </div>
+                <div>
+                    <label class="block text-[11px] font-bold uppercase text-slate-400 mb-1">Ikon / Emoji (Opsional)</label>
+                    <input type="text" id="modal-subject-icon" placeholder="Contoh: 📚, 🔬, 📐, 🏛️" class="w-full bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800 rounded-xl px-3 py-2 text-xs text-slate-800 dark:text-slate-200">
+                </div>
+                <div class="flex gap-3 pt-2">
+                    <button type="button" onclick="window.closeSubjectModal()" class="flex-1 py-2.5 rounded-xl font-bold text-xs bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300 transition">Batal</button>
+                    <button type="submit" class="flex-1 py-2.5 rounded-xl font-bold text-xs bg-indigo-600 hover:bg-indigo-500 text-white transition">Simpan</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Modal Konfirmasi Hapus Mata Pelajaran (Requirement 1) -->
+    <div id="confirm-delete-subject-modal" class="hidden fixed inset-0 z-[120] bg-slate-950/70 backdrop-blur-sm flex items-center justify-center p-4">
+        <div class="bg-white dark:bg-slate-900 rounded-2xl border border-slate-200 dark:border-slate-800 shadow-2xl max-w-sm w-full p-6 space-y-4">
+            <div class="flex items-center gap-3">
+                <div class="w-10 h-10 rounded-full bg-rose-500/10 text-rose-500 flex items-center justify-center">
+                    <i data-lucide="trash-2" class="w-5 h-5"></i>
+                </div>
+                <h3 class="font-bold text-sm text-slate-900 dark:text-white">Hapus Mata Pelajaran?</h3>
+            </div>
+            <p class="text-xs text-slate-500 dark:text-slate-400">Apakah kamu yakin ingin menghapus mata pelajaran ini?</p>
+            <div class="flex gap-3 pt-1">
+                <button onclick="window.cancelDeleteSubject()" class="flex-1 py-2.5 rounded-xl font-bold text-xs bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300 transition">Batal</button>
+                <button onclick="window.performDeleteSubject()" class="flex-1 py-2.5 rounded-xl font-bold text-xs bg-rose-600 hover:bg-rose-500 text-white transition">Ya, Hapus</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal Tambah/Edit Pencapaian Custom (Requirement 2) -->
+    <div id="achievement-modal" class="hidden fixed inset-0 z-[120] bg-slate-950/70 backdrop-blur-sm flex items-center justify-center p-4">
+        <div class="bg-white dark:bg-slate-900 rounded-2xl border border-slate-200 dark:border-slate-800 shadow-2xl max-w-md w-full p-6 space-y-4">
+            <div class="flex justify-between items-center border-b border-slate-100 dark:border-slate-800 pb-3">
+                <h3 class="font-bold text-sm text-slate-900 dark:text-white" id="modal-ach-heading">Tambah Pencapaian Custom</h3>
+                <button onclick="window.closeAchievementModal()" class="text-slate-400 hover:text-slate-200 p-1"><i data-lucide="x" class="w-5 h-5"></i></button>
+            </div>
+            <form onsubmit="window.saveAchievementModal(event)" class="space-y-4">
+                <input type="hidden" id="modal-ach-id" value="">
+                <div>
+                    <label class="block text-[11px] font-bold uppercase text-slate-400 mb-1">Nama Pencapaian</label>
+                    <input type="text" id="modal-ach-title" placeholder="Contoh: Belajar Konsisten" required class="w-full bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800 rounded-xl px-3 py-2 text-xs text-slate-800 dark:text-slate-200">
+                </div>
+                <div>
+                    <label class="block text-[11px] font-bold uppercase text-slate-400 mb-1">Deskripsi</label>
+                    <input type="text" id="modal-ach-desc" placeholder="Contoh: Belajar selama 7 hari berturut-turut" required class="w-full bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800 rounded-xl px-3 py-2 text-xs text-slate-800 dark:text-slate-200">
+                </div>
+                <div class="grid grid-cols-2 gap-3">
+                    <div>
+                        <label class="block text-[11px] font-bold uppercase text-slate-400 mb-1">Target Angka</label>
+                        <input type="number" id="modal-ach-req" placeholder="Contoh: 7" required min="1" class="w-full bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800 rounded-xl px-3 py-2 text-xs text-slate-800 dark:text-slate-200">
+                    </div>
+                    <div>
+                        <label class="block text-[11px] font-bold uppercase text-slate-400 mb-1">Ikon / Emoji</label>
+                        <input type="text" id="modal-ach-icon" placeholder="Contoh: 🔥" class="w-full bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800 rounded-xl px-3 py-2 text-xs text-slate-800 dark:text-slate-200">
+                    </div>
+                </div>
+                <div>
+                    <label class="block text-[11px] font-bold uppercase text-slate-400 mb-1">Jenis Pencapaian</label>
+                    <select id="modal-ach-type" class="w-full bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800 rounded-xl px-3 py-2 text-xs text-slate-800 dark:text-slate-200">
+                        <option value="streak">Hari Streak Belajar</option>
+                        <option value="sesi">Jumlah Sesi Belajar</option>
+                        <option value="to">Jumlah Tryout Diikuti</option>
+                        <option value="salah">Jumlah Evaluasi Soal</option>
+                        <option value="skor">Skor Tryout UTBK</option>
+                        <option value="custom">Target Khusus Lainnya</option>
+                    </select>
+                </div>
+                <div class="flex gap-3 pt-2">
+                    <button type="button" onclick="window.closeAchievementModal()" class="flex-1 py-2.5 rounded-xl font-bold text-xs bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300 transition">Batal</button>
+                    <button type="submit" class="flex-1 py-2.5 rounded-xl font-bold text-xs bg-amber-600 hover:bg-amber-500 text-white transition">Simpan</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Modal Konfirmasi Hapus Pencapaian (Requirement 2) -->
+    <div id="confirm-delete-ach-modal" class="hidden fixed inset-0 z-[120] bg-slate-950/70 backdrop-blur-sm flex items-center justify-center p-4">
+        <div class="bg-white dark:bg-slate-900 rounded-2xl border border-slate-200 dark:border-slate-800 shadow-2xl max-w-sm w-full p-6 space-y-4">
+            <div class="flex items-center gap-3">
+                <div class="w-10 h-10 rounded-full bg-rose-500/10 text-rose-500 flex items-center justify-center">
+                    <i data-lucide="trash-2" class="w-5 h-5"></i>
+                </div>
+                <h3 class="font-bold text-sm text-slate-900 dark:text-white">Hapus Pencapaian?</h3>
+            </div>
+            <p class="text-xs text-slate-500 dark:text-slate-400">Apakah kamu yakin ingin menghapus pencapaian ini?</p>
+            <div class="flex gap-3 pt-1">
+                <button onclick="window.cancelDeleteAchievement()" class="flex-1 py-2.5 rounded-xl font-bold text-xs bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300 transition">Batal</button>
+                <button onclick="window.performDeleteAchievement()" class="flex-1 py-2.5 rounded-xl font-bold text-xs bg-rose-600 hover:bg-rose-500 text-white transition">Ya, Hapus</button>
+            </div>
+        </div>
+    </div>
+
+    <script type="module" src="/src/main.tsx"></script>
+</body>
+</html>
